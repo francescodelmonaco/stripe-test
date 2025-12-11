@@ -1,11 +1,31 @@
+'use client';
+import { useState } from 'react';
 export default function Home() {
+  const [loading, setLoading] = useState(false);
+  const handleCheckout = async () => {
+    setLoading(true);
+    const response = await fetch('/api/checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ amount: 2000 }), // 20€
+    });
+
+    const { url } = await response.json();
+    if (url) {
+      window.location.href = url;
+    }
+    setLoading(false);
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center">
-      <main className="flex flex-col items-center min-h-screen w-full max-w-3xl gap-4 mt-16">
-        <h1 className="text-3xl font-bold">Stripe Test</h1>
-        <p className="text-lg">Test Stripe integration</p>
-        <button className="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-950 transition-colors cursor-pointer shadow">Checkout</button>
-      </main>
-    </div>
+    <main className="flex min-h-screen items-center justify-center">
+      <button
+        onClick={handleCheckout}
+        disabled={loading}
+        className="bg-blue-600 text-white px-6 py-3 rounded-full disabled:opacity-50"
+      >
+        {loading ? 'Caricamento...' : 'Paga 20€'}
+      </button>
+    </main>
   );
 }
